@@ -1,0 +1,41 @@
+
+<div id="loginBox">
+    <h2>Login</h2>
+    <input id="pass" type="password" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+</div>
+
+<div id="app" style="display:none;">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Student Manager</h1>
+<h3 id="total"></h3>
+<h3 id="income"></h3>
+
+
+
+<input id="name" placeholder="Student name">
+<input id="age" placeholder="Age">
+<input id="fees" placeholder="Fees">
+
+<button onclick="addStudent()">Add</button>
+
+<br><br>
+
+<input id="search" placeholder="Search student..." oninput="renderList()">
+<button onclick="exportCSV()">⬇ Export Excel</button>
+
+
+<ul id="list"></ul>
+
+<script src="script.js"></script>
+</div>
+</body>
+</html>
+

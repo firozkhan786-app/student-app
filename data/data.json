@@ -1,0 +1,45 @@
+[
+  {
+    "name": "FIROZKHAN ",
+    "age": "52",
+    "fees": "52000",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "FAISAL",
+    "age": "23",
+    "fees": "120000",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "TANVEERKHAN ",
+    "age": "20",
+    "fees": "87000",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "TAHA",
+    "age": "22",
+    "fees": "79000",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "ali",
+    "age": "27",
+    "fees": "500",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "amrita",
+    "age": "37",
+    "fees": "125000",
+    "date": "2/18/2026"
+  },
+  {
+    "name": "ashma",
+    "age": "38",
+    "fees": "49000",
+    "date": "2/18/2026",
+    "status": "Unpaid"
+  }
+]
