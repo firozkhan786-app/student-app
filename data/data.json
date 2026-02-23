@@ -41,5 +41,14 @@
     "fees": "49000",
     "date": "2/18/2026",
     "status": "Unpaid"
+  },
+  {
+    "name": "FIROZKHAN PATHAN",
+    "age": "52",
+    "fees": "25000",
+    "phone": "09825026027",
+    "country": "India",
+    "date": "2/23/2026",
+    "status": "Unpaid"
   }
 ]
