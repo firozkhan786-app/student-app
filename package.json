@@ -13,5 +13,13 @@
   "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firozkhan786-app/student-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/firozkhan786-app/student-app/issues"
+  },
+  "homepage": "https://github.com/firozkhan786-app/student-app#readme"
 }

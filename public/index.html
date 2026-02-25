@@ -1,4 +1,10 @@
-<!-- update -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student CRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
 <div id="loginBox">
     <h2>Login</h2>
@@ -7,38 +13,50 @@
 </div>
 
 <div id="app" style="display:none;">
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student App</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
-<h1>Student Manager</h1>
+<h1>Student CRM</h1>
+<div id="cards" style="display:flex;flex-wrap:wrap;gap:12px;margin:15px 0;"></div>
 <h3 id="total"></h3>
 <h3 id="income"></h3>
 
+<!-- CHARTS -->
+<canvas id="studentsChart" height="100"></canvas>
+<br>
+<canvas id="incomeChart" height="100"></canvas>
 
+<br>
+<h3>Students by Country</h3>
+<canvas id="countryChart" height="100"></canvas>
 
-<input id="name" placeholder="Student name">
-<input id="age" placeholder="Age">
-<input id="fees" placeholder="Fees">
-<input id="phone" placeholder="Phone number">
-<input id="country" placeholder="Country / Course">
+<input id="name" placeholder="Student name" onkeydown="if(event.key==='Enter'){addStudent()}">
+<input id="phone" placeholder="Phone number" onkeydown="if(event.key==='Enter'){addStudent()}">
+<input id="country" placeholder="Country / Course" onkeydown="if(event.key==='Enter'){addStudent()}">
+<input id="fees" placeholder="Fees" onkeydown="if(event.key==='Enter'){addStudent()}">
 
-<button onclick="addStudent()">Add</button>
+<select id="status">
+<option>New Lead</option>
+<option>Contacted</option>
+<option>Documents Pending</option>
+<option>Applied</option>
+<option>Visa Approved</option>
+<option>Rejected</option>
+</select>
+
+<input id="notes" placeholder="Notes" onkeydown="if(event.key==='Enter'){addStudent()}">
+
+<button onclick="addStudent()">Add Student</button>
 
 <br><br>
 
-<input id="search" placeholder="Search student..." oninput="renderList()">
+<input id="search" placeholder="Search..." oninput="renderList()">
 <button onclick="exportCSV()">⬇ Export Excel</button>
-
 
 <ul id="list"></ul>
 
-<script src="script.js"></script>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
-

@@ -1,54 +1,36 @@
 [
   {
-    "name": "FIROZKHAN ",
-    "age": "52",
-    "fees": "52000",
-    "date": "2/18/2026"
+    "name": "Tanveerkhan ",
+    "phone": "7283921698",
+    "country": "uk",
+    "fees": 2670000,
+    "status": "Applied",
+    "notes": "new",
+    "date": "2026-02-24"
   },
   {
-    "name": "FAISAL",
-    "age": "23",
-    "fees": "120000",
-    "date": "2/18/2026"
+    "phone": "9826027056",
+    "country": "GERMONY",
+    "fees": 81000,
+    "notes": "DONE ",
+    "date": "2026-02-25"
   },
   {
-    "name": "TANVEERKHAN ",
-    "age": "20",
-    "fees": "87000",
-    "date": "2/18/2026"
+    "name": "ADIL",
+    "phone": "",
+    "country": "",
+    "fees": 0,
+    "status": "New Lead",
+    "notes": "",
+    "date": "2026-02-25"
   },
   {
-    "name": "TAHA",
-    "age": "22",
-    "fees": "79000",
-    "date": "2/18/2026"
-  },
-  {
-    "name": "ali",
-    "age": "27",
-    "fees": "500",
-    "date": "2/18/2026"
-  },
-  {
-    "name": "amrita",
-    "age": "37",
-    "fees": "125000",
-    "date": "2/18/2026"
-  },
-  {
-    "name": "ashma",
-    "age": "38",
-    "fees": "49000",
-    "date": "2/18/2026",
-    "status": "Unpaid"
-  },
-  {
-    "name": "FIROZKHAN PATHAN",
-    "age": "52",
-    "fees": "25000",
-    "phone": "09825026027",
-    "country": "India",
-    "date": "2/23/2026",
-    "status": "Unpaid"
+    "name": "ADEELKHAN ",
+    "phone": "5878965488",
+    "country": "GERMANY",
+    "fees": 89000,
+    "status": "Contacted",
+    "notes": "HI",
+    "date": "2026-02-25"
   }
 ]

@@ -1,6 +1,6 @@
 let students = [];
 let editIndex = -1;
-let studentsChart, incomeChart, countryChart;
+let studentsChart, incomeChart;
 
 function login(){
     const pass=document.getElementById("pass").value;
@@ -33,19 +33,14 @@ function loadStudents(){
 
 function addStudent(){
     const student={
-        name:document.getElementById("name").value,
-        phone:document.getElementById("phone").value,
-        country:document.getElementById("country").value,
-        fees:Number(document.getElementById("fees").value||0),
-        status:document.getElementById("status").value,
-        notes:document.getElementById("notes").value,
+        name:name.value,
+        phone:phone.value,
+        country:country.value,
+        fees:Number(fees.value),
+        status:status.value,
+        notes:notes.value,
         date:new Date().toISOString().split("T")[0]
     };
-
-    if(!student.name){
-        alert("Enter name");
-        return;
-    }
 
     if(editIndex!==-1){
         fetch("/students/"+editIndex,{
@@ -72,13 +67,14 @@ function addStudent(){
 
 function editStudent(i){
     const s=students[i];
-    document.getElementById("name").value=s.name;
-    document.getElementById("phone").value=s.phone;
-    document.getElementById("country").value=s.country;
-    document.getElementById("fees").value=s.fees;
-    document.getElementById("status").value=s.status;
-    document.getElementById("notes").value=s.notes;
+    name.value=s.name;
+    phone.value=s.phone;
+    country.value=s.country;
+    fees.value=s.fees;
+    status.value=s.status;
+    notes.value=s.notes;
     editIndex=i;
+    window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function deleteStudent(i){
@@ -87,12 +83,13 @@ function deleteStudent(i){
 }
 
 function clearForm(){
-    document.getElementById("name").value="";
-    document.getElementById("phone").value="";
-    document.getElementById("country").value="";
-    document.getElementById("fees").value="";
-    document.getElementById("status").selectedIndex=0;
-    document.getElementById("notes").value="";
+    name.value="";
+    phone.value="";
+    country.value="";
+    fees.value="";
+    status.selectedIndex=0;
+    notes.value="";
+    name.focus();
 }
 
 function statusColor(s){
@@ -116,10 +113,8 @@ function statusProgress(s){
     };
     return map[s]||0;
 }
-
 function renderCards(){
     const box=document.getElementById("cards");
-    if(!box) return;
 
     let total=students.length;
     let newLeads=0, applied=0, approved=0, revenue=0;
@@ -132,20 +127,33 @@ function renderCards(){
     });
 
     box.innerHTML=`
-    <div class="card">Total<br><b>${total}</b></div>
-    <div class="card">Leads<br><b>${newLeads}</b></div>
-    <div class="card">Applied<br><b>${applied}</b></div>
-    <div class="card">Approved<br><b>${approved}</b></div>
-    <div class="card">Revenue<br><b>₹${revenue}</b></div>`;
-}
+    <div style="background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:150px;">
+        <b>Total Students</b><br><span style="font-size:22px">${total}</span>
+    </div>
 
+    <div style="background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:150px;">
+        <b>New Leads</b><br><span style="font-size:22px">${newLeads}</span>
+    </div>
+
+    <div style="background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:150px;">
+        <b>Applied</b><br><span style="font-size:22px">${applied}</span>
+    </div>
+
+    <div style="background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:150px;">
+        <b>Visa Approved</b><br><span style="font-size:22px">${approved}</span>
+    </div>
+
+    <div style="background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:150px;">
+        <b>Total Revenue</b><br><span style="font-size:22px">₹${revenue}</span>
+    </div>
+    `;
+}
 function renderList(){
-    const ul=document.getElementById("list");
-    const searchText=document.getElementById("search").value.toLowerCase();
+    const ul=list;
+    const searchText=search.value.toLowerCase();
 
     ul.innerHTML="";
     renderCards();
-
     let totalFees=0;
 
     students.forEach((s,i)=>{
@@ -158,8 +166,8 @@ function renderList(){
 
             li.innerHTML=`
             <div>
-                <b>${s.name}</b><br>
-                📞 ${s.phone}<br>
+                <b>${s.name}</b> <span style="color:#888;font-size:12px">(${s.id||""})</span><br>
+                📞 <a href="https://wa.me/${s.phone}" target="_blank">${s.phone}</a><br>
                 🌍 ${s.country}<br>
                 💰 ₹${s.fees}<br>
 
@@ -185,11 +193,10 @@ function renderList(){
         }
     });
 
-    document.getElementById("total").innerText="Total Students: "+students.length;
-    document.getElementById("income").innerText="Total Fees: ₹"+totalFees;
+    total.innerText="Total Students: "+students.length;
+    income.innerText="Total Fees: ₹"+totalFees;
 
     drawCharts();
-    drawCountryChart();
 }
 
 function drawCharts(){
@@ -215,29 +222,6 @@ function drawCharts(){
     incomeChart=new Chart(document.getElementById("incomeChart"),{
         type:"line",
         data:{labels:months,datasets:[{label:"Income",data:inc}]}
-    });
-}
-
-function drawCountryChart(){
-    const map={};
-
-    students.forEach(s=>{
-        if(!s.country) return;
-        const c=s.country.trim();
-        map[c]=(map[c]||0)+1;
-    });
-
-    const labels=Object.keys(map);
-    const data=Object.values(map);
-
-    if(countryChart) countryChart.destroy();
-
-    countryChart=new Chart(document.getElementById("countryChart"),{
-        type:"doughnut",
-        data:{
-            labels:labels,
-            datasets:[{data:data}]
-        }
     });
 }
 
