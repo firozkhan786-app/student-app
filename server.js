@@ -1,32 +1,22 @@
-const Student = require("./models/Student");
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const Student = require("./models/Student");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const PASSWORD = "1234";
 
-// middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// data file path
-const DATA_FILE = path.join(__dirname, "data", "data.json");
-
-// ---------- helpers ----------
-function readData(){
-    try{
-        const data = fs.readFileSync(DATA_FILE,"utf8");
-        return JSON.parse(data);
-    }catch{
-        return [];
-    }
-}
-
-function writeData(data){
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data,null,2));
-}
+// ✅ MongoDB Connect
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log(err));
 
 // ---------- LOGIN ----------
 app.post("/login",(req,res)=>{
@@ -38,47 +28,47 @@ app.post("/login",(req,res)=>{
 });
 
 // ---------- GET students ----------
-app.get("/students",(req,res)=>{
-    res.json(readData());
+app.get("/students", async (req,res)=>{
+    try{
+        const students = await Student.find();
+        res.json(students);
+    }catch(err){
+        res.status(500).send("Error fetching students");
+    }
 });
 
 // ---------- ADD student ----------
-app.post("/students",(req,res)=>{
-    const data = readData();
-    data.push(req.body);
-    writeData(data);
-    res.json({success:true});
+app.post("/students", async (req,res)=>{
+    try{
+        const newStudent = new Student(req.body);
+        await newStudent.save();
+        res.json(newStudent);
+    }catch(err){
+        res.status(500).send("Error saving student");
+    }
 });
 
 // ---------- DELETE student ----------
-app.delete("/students/:index",(req,res)=>{
-    const data = readData();
-    const i = parseInt(req.params.index);
-
-    if(i >= 0 && i < data.length){
-        data.splice(i,1);
-        writeData(data);
+app.delete("/students/:id", async (req,res)=>{
+    try{
+        await Student.findByIdAndDelete(req.params.id);
         res.json({success:true});
-    }else{
-        res.json({success:false});
+    }catch(err){
+        res.status(500).send("Error deleting student");
     }
 });
 
 // ---------- UPDATE student ----------
-app.put("/students/:index",(req,res)=>{
-    const data = readData();
-    const i = parseInt(req.params.index);
-
-    if(i >= 0 && i < data.length){
-        data[i] = req.body;
-        writeData(data);
+app.put("/students/:id", async (req,res)=>{
+    try{
+        await Student.findByIdAndUpdate(req.params.id, req.body);
         res.json({success:true});
-    }else{
-        res.json({success:false});
+    }catch(err){
+        res.status(500).send("Error updating student");
     }
 });
 
 // ---------- START SERVER ----------
 app.listen(PORT,()=>{
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
