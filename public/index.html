@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student CRM</title>
+    <title>Student CRM Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,24 +14,45 @@
 
 <div id="app" style="display:none;">
 
-<h1>Student CRM</h1>
+<h1>Student CRM Pro</h1>
+
 <div id="cards" style="display:flex;flex-wrap:wrap;gap:12px;margin:15px 0;"></div>
+
 <h3 id="total"></h3>
 <h3 id="income"></h3>
 
 <!-- CHARTS -->
-<canvas id="studentsChart" height="100"></canvas>
-<br>
-<canvas id="incomeChart" height="100"></canvas>
+<div class="chart-box">
+    <canvas id="studentsChart"></canvas>
+</div>
 
-<br>
+<div class="chart-box">
+    <canvas id="incomeChart"></canvas>
+</div>
+
 <h3>Students by Country</h3>
-<canvas id="countryChart" height="100"></canvas>
 
-<input id="name" placeholder="Student name" onkeydown="if(event.key==='Enter'){addStudent()}">
-<input id="phone" placeholder="Phone number" onkeydown="if(event.key==='Enter'){addStudent()}">
-<input id="country" placeholder="Country / Course" onkeydown="if(event.key==='Enter'){addStudent()}">
-<input id="fees" placeholder="Fees" onkeydown="if(event.key==='Enter'){addStudent()}">
+<div class="chart-box">
+    <canvas id="countryChart"></canvas>
+</div>
+
+<hr>
+
+<input id="name" placeholder="Student name">
+<input id="phone" placeholder="Phone number">
+
+<select id="country">
+    <option value="">Select Country</option>
+    <option value="UK">UK</option>
+    <option value="GERMANY">GERMANY</option>
+    <option value="USA">USA</option>
+    <option value="DUBAI">DUBAI</option>
+    <option value="AUSTRALIA">AUSTRALIA</option>
+    <option value="CANADA">CANADA</option>
+</select>
+<input type="date" id="followUp">
+
+<input id="fees" placeholder="Total Fees">
 
 <select id="status">
 <option>New Lead</option>
@@ -42,7 +63,7 @@
 <option>Rejected</option>
 </select>
 
-<input id="notes" placeholder="Notes" onkeydown="if(event.key==='Enter'){addStudent()}">
+<input id="notes" placeholder="Notes">
 
 <button onclick="addStudent()">Add Student</button>
 
@@ -54,6 +75,7 @@
 <ul id="list"></ul>
 
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>

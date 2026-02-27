@@ -219,10 +219,22 @@ function drawCharts(){
         data:{labels:months,datasets:[{label:"Students",data:stu}]}
     });
 
-    incomeChart=new Chart(document.getElementById("incomeChart"),{
-        type:"line",
-        data:{labels:months,datasets:[{label:"Income",data:inc}]}
-    });
+   incomeChart=new Chart(document.getElementById("incomeChart"),{
+    type:"line",
+    data:{
+        labels:months,
+        datasets:[{
+            label:"Income",
+            data:inc,
+            borderWidth:2,
+            tension:0.3
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false
+    }
+});
 }
 
 function exportCSV(){

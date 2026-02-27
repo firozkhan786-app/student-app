@@ -2,6 +2,7 @@ let students = [];
 let editIndex = -1;
 let studentsChart, incomeChart, countryChart;
 
+// LOGIN
 function login(){
     const pass=document.getElementById("pass").value;
 
@@ -22,6 +23,7 @@ function login(){
     });
 }
 
+// LOAD
 function loadStudents(){
     fetch("/students")
     .then(res=>res.json())
@@ -31,34 +33,20 @@ function loadStudents(){
     });
 }
 
+// ADD STUDENT
 function addStudent(){
+
     const student={
-        name:document.getElementById("name").value,
-        phone:document.getElementById("phone").value,
-        country:document.getElementById("country").value,
+        name:document.getElementById("name").value || "No Name",
+        phone:document.getElementById("phone").value || "",
+        country:document.getElementById("country").value || "",
         fees:Number(document.getElementById("fees").value||0),
-        status:document.getElementById("status").value,
-        notes:document.getElementById("notes").value,
+        payments: [],
+        followUp: "",
+        status:document.getElementById("status").value || "New Lead",
+        notes:document.getElementById("notes").value || "",
         date:new Date().toISOString().split("T")[0]
     };
-
-    if(!student.name){
-        alert("Enter name");
-        return;
-    }
-
-    if(editIndex!==-1){
-        fetch("/students/"+editIndex,{
-            method:"PUT",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(student)
-        }).then(()=>{
-            editIndex=-1;
-            clearForm();
-            loadStudents();
-        });
-        return;
-    }
 
     fetch("/students",{
         method:"POST",
@@ -70,114 +58,103 @@ function addStudent(){
     });
 }
 
-function editStudent(i){
-    const s=students[i];
-    document.getElementById("name").value=s.name;
-    document.getElementById("phone").value=s.phone;
-    document.getElementById("country").value=s.country;
-    document.getElementById("fees").value=s.fees;
-    document.getElementById("status").value=s.status;
-    document.getElementById("notes").value=s.notes;
-    editIndex=i;
+// ADD PAYMENT
+function addPayment(index){
+
+    const amount = prompt("Enter payment amount:");
+
+    if(!amount || isNaN(amount)) return;
+
+    const student = students[index];
+
+    if(!student.payments){
+        student.payments=[];
+    }
+
+    student.payments.push({
+        amount:Number(amount),
+        date:new Date().toISOString().split("T")[0]
+    });
+
+    fetch("/students/"+index,{
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(student)
+    }).then(()=>{
+        loadStudents();
+    });
 }
 
-function deleteStudent(i){
-    fetch("/students/"+i,{method:"DELETE"})
-    .then(()=>loadStudents());
-}
-
-function clearForm(){
-    document.getElementById("name").value="";
-    document.getElementById("phone").value="";
-    document.getElementById("country").value="";
-    document.getElementById("fees").value="";
-    document.getElementById("status").selectedIndex=0;
-    document.getElementById("notes").value="";
-}
-
-function statusColor(s){
-    if(s==="New Lead") return "#ffc107";
-    if(s==="Contacted") return "#0dcaf0";
-    if(s==="Documents Pending") return "#fd7e14";
-    if(s==="Applied") return "#6f42c1";
-    if(s==="Visa Approved") return "#198754";
-    if(s==="Rejected") return "#dc3545";
-    return "#999";
-}
-
-function statusProgress(s){
-    const map={
-        "New Lead":10,
-        "Contacted":25,
-        "Documents Pending":40,
-        "Applied":60,
-        "Visa Approved":100,
-        "Rejected":100
-    };
-    return map[s]||0;
-}
-
+// RENDER CARDS
 function renderCards(){
+
     const box=document.getElementById("cards");
-    if(!box) return;
 
     let total=students.length;
-    let newLeads=0, applied=0, approved=0, revenue=0;
+    let revenue=0;
+    let totalDue=0;
 
     students.forEach(s=>{
-        if(s.status==="New Lead") newLeads++;
-        if(s.status==="Applied") applied++;
-        if(s.status==="Visa Approved") approved++;
+
+        const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
+        const due = Number(s.fees||0) - totalPaid;
+
         revenue+=Number(s.fees||0);
+        totalDue+=due;
     });
 
     box.innerHTML=`
     <div class="card">Total<br><b>${total}</b></div>
-    <div class="card">Leads<br><b>${newLeads}</b></div>
-    <div class="card">Applied<br><b>${applied}</b></div>
-    <div class="card">Approved<br><b>${approved}</b></div>
-    <div class="card">Revenue<br><b>₹${revenue}</b></div>`;
+    <div class="card">Revenue<br><b>₹${revenue}</b></div>
+    <div class="card">Total Due<br><b>₹${totalDue}</b></div>
+    `;
 }
 
+// RENDER LIST
 function renderList(){
+
     const ul=document.getElementById("list");
     const searchText=document.getElementById("search").value.toLowerCase();
 
     ul.innerHTML="";
     renderCards();
 
-    let totalFees=0;
-
     students.forEach((s,i)=>{
+
+        const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
+        const due = Number(s.fees||0) - totalPaid;
+
         const text=(s.name+s.phone+s.country+s.status+s.notes).toLowerCase();
 
         if(text.includes(searchText)){
-            totalFees+=s.fees||0;
 
             const li=document.createElement("li");
+            let paymentHistoryHTML = "";
+
+if(s.payments && s.payments.length > 0){
+    paymentHistoryHTML = "<b>Payment History:</b><br>";
+    
+    s.payments.forEach(p=>{
+        paymentHistoryHTML += `
+        <div style="font-size:13px;color:#555;">
+            💰 ₹${p.amount} - 📅 ${p.date}
+        </div>
+        `;
+    });
+}
 
             li.innerHTML=`
             <div>
                 <b>${s.name}</b><br>
                 📞 ${s.phone}<br>
                 🌍 ${s.country}<br>
-                💰 ₹${s.fees}<br>
-
-                <span style="background:${statusColor(s.status)};color:white;padding:3px 8px;border-radius:6px;">
-                    ${s.status}
-                </span><br>
-
+                💰 Total: ₹${s.fees}<br>
+                💵 Paid: ₹${totalPaid}<br>
+                💸 Due: ₹${due}<br>
+                <button onclick="addPayment(${i})">Add Payment</button><br>
+                ${paymentHistoryHTML}
                 🗒 ${s.notes}<br>
                 📅 ${s.date}<br>
-
-                <div style="background:#eee;height:6px;border-radius:5px;margin-top:6px;">
-                  <div style="width:${statusProgress(s.status)}%;background:${statusColor(s.status)};height:6px;border-radius:5px;"></div>
-                </div>
-            </div>
-
-            <div>
-                <button onclick="editStudent(${i})">Edit</button>
-                <button onclick="deleteStudent(${i})">Delete</button>
             </div>
             `;
 
@@ -185,46 +162,38 @@ function renderList(){
         }
     });
 
-    document.getElementById("total").innerText="Total Students: "+students.length;
-    document.getElementById("income").innerText="Total Fees: ₹"+totalFees;
-
     drawCharts();
     drawCountryChart();
 }
 
+// CHARTS (same as before)
 function drawCharts(){
+
     const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let stu=new Array(12).fill(0);
-    let inc=new Array(12).fill(0);
 
     students.forEach(s=>{
         if(!s.date) return;
         const m=new Date(s.date).getMonth();
         stu[m]++;
-        inc[m]+=Number(s.fees||0);
     });
 
     if(studentsChart) studentsChart.destroy();
-    if(incomeChart) incomeChart.destroy();
 
     studentsChart=new Chart(document.getElementById("studentsChart"),{
         type:"bar",
-        data:{labels:months,datasets:[{label:"Students",data:stu}]}
-    });
-
-    incomeChart=new Chart(document.getElementById("incomeChart"),{
-        type:"line",
-        data:{labels:months,datasets:[{label:"Income",data:inc}]}
+        data:{labels:months,datasets:[{label:"Students",data:stu}]},
+        options:{responsive:true,maintainAspectRatio:false}
     });
 }
 
 function drawCountryChart(){
+
     const map={};
 
     students.forEach(s=>{
         if(!s.country) return;
-        const c=s.country.trim();
-        map[c]=(map[c]||0)+1;
+        map[s.country]=(map[s.country]||0)+1;
     });
 
     const labels=Object.keys(map);
@@ -234,17 +203,23 @@ function drawCountryChart(){
 
     countryChart=new Chart(document.getElementById("countryChart"),{
         type:"doughnut",
-        data:{
-            labels:labels,
-            datasets:[{data:data}]
-        }
+        data:{labels:labels,datasets:[{data:data}]},
+        options:{responsive:true,maintainAspectRatio:false}
     });
 }
 
+function clearForm(){
+    document.getElementById("name").value="";
+    document.getElementById("phone").value="";
+    document.getElementById("country").selectedIndex=0;
+    document.getElementById("fees").value="";
+    document.getElementById("notes").value="";
+}
+
 function exportCSV(){
-    let csv="Name,Phone,Country,Fees,Status,Notes,Date\n";
+    let csv="Name,Phone,Country,Fees\n";
     students.forEach(s=>{
-        csv+=`${s.name},${s.phone},${s.country},${s.fees},${s.status},${s.notes},${s.date}\n`;
+        csv+=`${s.name},${s.phone},${s.country},${s.fees}\n`;
     });
     const blob=new Blob([csv],{type:"text/csv"});
     const a=document.createElement("a");

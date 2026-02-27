@@ -1,3 +1,4 @@
+const Student = require("./models/Student");
 const express = require("express");
 const fs = require("fs");
 const path = require("path");

@@ -73,3 +73,30 @@ li div button{
         margin-top:5px;
     }
 }
+/* ===== CHART DESIGN ===== */
+
+.chart-box{
+    width:100%;
+    max-width:600px;
+    height:300px;
+    margin:20px auto;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+canvas{
+    width:100% !important;
+    height:100% !important;
+}
+/* ---- SELECT DROPDOWN STYLE ---- */
+
+select{
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}

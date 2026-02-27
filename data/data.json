@@ -6,14 +6,36 @@
     "fees": 2670000,
     "status": "Applied",
     "notes": "new",
-    "date": "2026-02-24"
+    "date": "2026-02-24",
+    "payments": [
+      {
+        "amount": 52000,
+        "date": "2026-02-27"
+      },
+      {
+        "amount": 35000,
+        "date": "2026-02-27"
+      },
+      {
+        "amount": 45000,
+        "date": "2026-02-27"
+      }
+    ]
   },
   {
+    "name": "ARYAN",
     "phone": "9826027056",
-    "country": "GERMONY",
+    "country": "GERMANY",
     "fees": 81000,
+    "status": "New Lead",
     "notes": "DONE ",
-    "date": "2026-02-25"
+    "date": "2026-02-27",
+    "payments": [
+      {
+        "amount": 45000,
+        "date": "2026-02-27"
+      }
+    ]
   },
   {
     "name": "ADIL",
@@ -32,5 +54,64 @@
     "status": "Contacted",
     "notes": "HI",
     "date": "2026-02-25"
+  },
+  {
+    "name": "saniya ",
+    "phone": "85967485",
+    "country": "dubai",
+    "fees": 582000,
+    "status": "Applied",
+    "notes": "contack",
+    "date": "2026-02-27",
+    "payments": [
+      {
+        "amount": 125000,
+        "date": "2026-02-27"
+      }
+    ]
+  },
+  {
+    "name": "BHAVIN",
+    "phone": "22222",
+    "country": "AUSTRALIA",
+    "fees": 58000,
+    "status": "Rejected",
+    "notes": "CALL",
+    "date": "2026-02-27"
+  },
+  {
+    "name": "BHARGAV ",
+    "phone": "458663",
+    "country": "CANADA",
+    "fees": 25000,
+    "status": "Applied",
+    "notes": "CALL",
+    "date": "2026-02-27"
+  },
+  {
+    "name": "MOHSIN",
+    "phone": "5486222",
+    "country": "UK",
+    "fees": 520,
+    "payments": [],
+    "status": "New Lead",
+    "notes": "ADDD",
+    "date": "2026-02-27"
+  },
+  {
+    "name": "FAIJAL ",
+    "phone": "25486636",
+    "country": "USA",
+    "fees": 520000,
+    "payments": [
+      {
+        "amount": 250000,
+        "date": "2026-02-27"
+      }
+    ],
+    "followUp": "",
+    "status": "New Lead",
+    "notes": "CALL",
+    "date": "2026-02-27"
   }
 ]
