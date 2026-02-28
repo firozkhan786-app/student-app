@@ -3,25 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "cors": "^2.8.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^5.2.1",
-    "mongoose": "^9.2.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/firozkhan786-app/student-app.git"
-  },
-  "bugs": {
-    "url": "https://github.com/firozkhan786-app/student-app/issues"
-  },
-  "homepage": "https://github.com/firozkhan786-app/student-app#readme"
+    "mongoose": "^8.0.0"
+  }
 }

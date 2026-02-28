@@ -1,7 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+
 
 const Student = require("./models/Student");
 
@@ -14,10 +15,9 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // ✅ MongoDB Connect
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb+srv://12345678:Tanveer786@cluster0.1rbxbrk.mongodb.net/studentcrm?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
-
 // ---------- LOGIN ----------
 app.post("/login",(req,res)=>{
     if(req.body.password === PASSWORD){
