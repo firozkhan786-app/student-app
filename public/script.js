@@ -1,6 +1,5 @@
 let students = [];
-let editIndex = -1;
-let studentsChart, incomeChart, countryChart;
+let studentsChart, countryChart;
 
 // LOGIN
 function login(){
@@ -23,7 +22,7 @@ function login(){
     });
 }
 
-// LOAD
+// LOAD STUDENTS
 function loadStudents(){
     fetch("/students")
     .then(res=>res.json())
@@ -40,12 +39,9 @@ function addStudent(){
         name:document.getElementById("name").value || "No Name",
         phone:document.getElementById("phone").value || "",
         country:document.getElementById("country").value || "",
-        fees:Number(document.getElementById("fees").value||0),
-        payments: [],
-        followUp: "",
+        totalFees:Number(document.getElementById("fees").value || 0),
         status:document.getElementById("status").value || "New Lead",
-        notes:document.getElementById("notes").value || "",
-        date:new Date().toISOString().split("T")[0]
+        notes:document.getElementById("notes").value || ""
     };
 
     fetch("/students",{
@@ -76,7 +72,7 @@ function addPayment(index){
         date:new Date().toISOString().split("T")[0]
     });
 
-    fetch("/students/"+index,{
+    fetch("/students/"+student._id,{
         method:"PUT",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(student)
@@ -97,9 +93,9 @@ function renderCards(){
     students.forEach(s=>{
 
         const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
-        const due = Number(s.fees||0) - totalPaid;
+        const due = Number(s.totalFees||0) - totalPaid;
 
-        revenue+=Number(s.fees||0);
+        revenue+=Number(s.totalFees||0);
         totalDue+=due;
     });
 
@@ -122,7 +118,7 @@ function renderList(){
     students.forEach((s,i)=>{
 
         const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
-        const due = Number(s.fees||0) - totalPaid;
+        const due = Number(s.totalFees||0) - totalPaid;
 
         const text=(s.name+s.phone+s.country+s.status+s.notes).toLowerCase();
 
@@ -131,30 +127,30 @@ function renderList(){
             const li=document.createElement("li");
             let paymentHistoryHTML = "";
 
-if(s.payments && s.payments.length > 0){
-    paymentHistoryHTML = "<b>Payment History:</b><br>";
-    
-    s.payments.forEach(p=>{
-        paymentHistoryHTML += `
-        <div style="font-size:13px;color:#555;">
-            💰 ₹${p.amount} - 📅 ${p.date}
-        </div>
-        `;
-    });
-}
+            if(s.payments && s.payments.length > 0){
+                paymentHistoryHTML = "<b>Payment History:</b><br>";
+                
+                s.payments.forEach(p=>{
+                    paymentHistoryHTML += `
+                    <div style="font-size:13px;color:#555;">
+                        💰 ₹${p.amount} - 📅 ${p.date}
+                    </div>
+                    `;
+                });
+            }
 
             li.innerHTML=`
             <div>
                 <b>${s.name}</b><br>
                 📞 ${s.phone}<br>
                 🌍 ${s.country}<br>
-                💰 Total: ₹${s.fees}<br>
+                💰 Total: ₹${s.totalFees || 0}<br>
                 💵 Paid: ₹${totalPaid}<br>
                 💸 Due: ₹${due}<br>
                 <button onclick="addPayment(${i})">Add Payment</button><br>
                 ${paymentHistoryHTML}
-                🗒 ${s.notes}<br>
-                📅 ${s.date}<br>
+                🗒 ${s.notes || ""}<br>
+                📅 ${s.createdAt ? new Date(s.createdAt).toLocaleDateString() : ""}
             </div>
             `;
 
@@ -166,15 +162,15 @@ if(s.payments && s.payments.length > 0){
     drawCountryChart();
 }
 
-// CHARTS (same as before)
+// STUDENT CHART
 function drawCharts(){
 
     const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let stu=new Array(12).fill(0);
 
     students.forEach(s=>{
-        if(!s.date) return;
-        const m=new Date(s.date).getMonth();
+        if(!s.createdAt) return;
+        const m=new Date(s.createdAt).getMonth();
         stu[m]++;
     });
 
@@ -187,6 +183,7 @@ function drawCharts(){
     });
 }
 
+// COUNTRY CHART
 function drawCountryChart(){
 
     const map={};
@@ -217,9 +214,9 @@ function clearForm(){
 }
 
 function exportCSV(){
-    let csv="Name,Phone,Country,Fees\n";
+    let csv="Name,Phone,Country,TotalFees\n";
     students.forEach(s=>{
-        csv+=`${s.name},${s.phone},${s.country},${s.fees}\n`;
+        csv+=`${s.name},${s.phone},${s.country},${s.totalFees}\n`;
     });
     const blob=new Blob([csv],{type:"text/csv"});
     const a=document.createElement("a");
