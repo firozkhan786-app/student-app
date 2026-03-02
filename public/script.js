@@ -1,5 +1,5 @@
 let students = [];
-let studentsChart, countryChart;
+let studentsChart, countryChart, incomeChart;
 
 // LOGIN
 function login(){
@@ -41,6 +41,7 @@ function addStudent(){
         country:document.getElementById("country").value || "",
         totalFees:Number(document.getElementById("fees").value || 0),
         status:document.getElementById("status").value || "New Lead",
+        followUpDate: document.getElementById("followUp").value || null,
         notes:document.getElementById("notes").value || ""
     };
 
@@ -48,7 +49,9 @@ function addStudent(){
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(student)
-    }).then(()=>{
+    })
+    .then(res=>res.json())
+    .then(()=>{
         clearForm();
         loadStudents();
     });
@@ -58,7 +61,6 @@ function addStudent(){
 function addPayment(index){
 
     const amount = prompt("Enter payment amount:");
-
     if(!amount || isNaN(amount)) return;
 
     const student = students[index];
@@ -69,7 +71,7 @@ function addPayment(index){
 
     student.payments.push({
         amount:Number(amount),
-        date:new Date().toISOString().split("T")[0]
+        date:new Date().toISOString()
     });
 
     fetch("/students/"+student._id,{
@@ -93,9 +95,9 @@ function renderCards(){
     students.forEach(s=>{
 
         const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
-        const due = Number(s.totalFees||0) - totalPaid;
+        const due = Math.max(0, Number(s.totalFees||0) - totalPaid);
 
-        revenue+=Number(s.totalFees||0);
+        revenue+=totalPaid;
         totalDue+=due;
     });
 
@@ -118,7 +120,7 @@ function renderList(){
     students.forEach((s,i)=>{
 
         const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
-        const due = Number(s.totalFees||0) - totalPaid;
+        const due = Math.max(0, Number(s.totalFees||0) - totalPaid);
 
         const text=(s.name+s.phone+s.country+s.status+s.notes).toLowerCase();
 
@@ -133,21 +135,25 @@ function renderList(){
                 s.payments.forEach(p=>{
                     paymentHistoryHTML += `
                     <div style="font-size:13px;color:#555;">
-                        💰 ₹${p.amount} - 📅 ${p.date}
+                        💰 ₹${p.amount} - 📅 ${new Date(p.date).toLocaleDateString()}
                     </div>
                     `;
                 });
             }
 
-            li.innerHTML=`
+            li.innerHTML = `
             <div>
                 <b>${s.name}</b><br>
                 📞 ${s.phone}<br>
                 🌍 ${s.country}<br>
+                📆 Follow Up: ${s.followUpDate ? new Date(s.followUpDate).toLocaleDateString() : "Not Set"}<br>
                 💰 Total: ₹${s.totalFees || 0}<br>
                 💵 Paid: ₹${totalPaid}<br>
                 💸 Due: ₹${due}<br>
+
                 <button onclick="addPayment(${i})">Add Payment</button><br>
+                <button class="whatsapp" onclick="sendWhatsApp('${s.phone}','${s.name}')">WhatsApp</button><br>
+
                 ${paymentHistoryHTML}
                 🗒 ${s.notes || ""}<br>
                 📅 ${s.createdAt ? new Date(s.createdAt).toLocaleDateString() : ""}
@@ -160,6 +166,7 @@ function renderList(){
 
     drawCharts();
     drawCountryChart();
+    drawIncomeChart();
 }
 
 // STUDENT CHART
@@ -205,14 +212,75 @@ function drawCountryChart(){
     });
 }
 
+// INCOME CHART
+function drawIncomeChart(){
+
+    const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    let income=new Array(12).fill(0);
+
+    students.forEach(s=>{
+        if(!s.createdAt) return;
+
+        const m=new Date(s.createdAt).getMonth();
+        const totalPaid = (s.payments || []).reduce((sum,p)=>sum+Number(p.amount||0),0);
+
+        income[m]+=totalPaid;
+    });
+
+    if(incomeChart) incomeChart.destroy();
+
+    incomeChart=new Chart(document.getElementById("incomeChart"),{
+        type:"line",
+        data:{
+            labels:months,
+            datasets:[{
+                label:"Monthly Income",
+                data:income,
+                fill:false,
+                tension:0.3
+            }]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
+    });
+}
+
+// WHATSAPP FUNCTION
+function sendWhatsApp(phone,name){
+
+    if(!phone){
+        alert("Phone number not available");
+        return;
+    }
+
+    phone = phone.replace(/\s+/g, '');
+
+    let message = `Hello ${name},
+
+This is a follow-up regarding your study abroad process.
+
+Please contact us.
+
+Student CRM`;
+
+    let url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+}
+
+// CLEAR FORM
 function clearForm(){
     document.getElementById("name").value="";
     document.getElementById("phone").value="";
     document.getElementById("country").selectedIndex=0;
     document.getElementById("fees").value="";
     document.getElementById("notes").value="";
+    document.getElementById("followUp").value="";
 }
 
+// EXPORT CSV
 function exportCSV(){
     let csv="Name,Phone,Country,TotalFees\n";
     students.forEach(s=>{

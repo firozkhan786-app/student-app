@@ -2,80 +2,97 @@
 <html>
 <head>
     <title>Student CRM Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="loginBox">
-    <h2>Login</h2>
+    <h2>🔐 Admin Login</h2>
     <input id="pass" type="password" placeholder="Enter password">
     <button onclick="login()">Login</button>
 </div>
 
+<!-- MAIN APP -->
 <div id="app" style="display:none;">
 
-<h1>Student CRM Pro</h1>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>🎓 CRM</h2>
+        <p>Dashboard</p>
+        <p>Students</p>
+        <p>Analytics</p>
+    </div>
 
-<div id="cards" style="display:flex;flex-wrap:wrap;gap:12px;margin:15px 0;"></div>
+    <!-- CONTENT -->
+    <div class="main">
 
-<h3 id="total"></h3>
-<h3 id="income"></h3>
+        <div class="topbar">
+            <h1>Student CRM Dashboard</h1>
+        </div>
 
-<!-- CHARTS -->
-<div class="chart-box">
-    <canvas id="studentsChart"></canvas>
+        <!-- CARDS -->
+        <div id="cards"></div>
+
+        <!-- CHARTS -->
+        <div class="charts-grid">
+            <div class="chart-box">
+                <canvas id="studentsChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <canvas id="incomeChart"></canvas>
+            </div>
+
+            <div class="chart-box full">
+                <canvas id="countryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-box">
+            <h3>Add Student</h3>
+            <input id="name" placeholder="Student name">
+            <input id="phone" placeholder="Phone number">
+
+            <select id="country">
+                <option value="">Select Country</option>
+                <option>UK</option>
+                <option>USA</option>
+                <option>CANADA</option>
+                <option>AUSTRALIA</option>
+                <option>GERMANY</option>
+                <option>DUBAI</option>
+            </select>
+
+            <input type="date" id="followUp">
+            <input id="fees" placeholder="Total Fees">
+
+            <select id="status">
+                <option>New Lead</option>
+                <option>Contacted</option>
+                <option>Applied</option>
+                <option>Visa Approved</option>
+                <option>Rejected</option>
+            </select>
+
+            <input id="notes" placeholder="Notes">
+
+            <button onclick="addStudent()">Add Student</button>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-box">
+            <input id="search" placeholder="Search..." oninput="renderList()">
+            <button onclick="exportCSV()">Export CSV</button>
+        </div>
+
+        <!-- STUDENT LIST -->
+        <ul id="list"></ul>
+
+    </div>
 </div>
-
-<div class="chart-box">
-    <canvas id="incomeChart"></canvas>
-</div>
-
-<h3>Students by Country</h3>
-
-<div class="chart-box">
-    <canvas id="countryChart"></canvas>
-</div>
-
-<hr>
-
-<input id="name" placeholder="Student name">
-<input id="phone" placeholder="Phone number">
-
-<select id="country">
-    <option value="">Select Country</option>
-    <option value="UK">UK</option>
-    <option value="GERMANY">GERMANY</option>
-    <option value="USA">USA</option>
-    <option value="DUBAI">DUBAI</option>
-    <option value="AUSTRALIA">AUSTRALIA</option>
-    <option value="CANADA">CANADA</option>
-</select>
-<input type="date" id="followUp">
-
-<input id="fees" placeholder="Total Fees">
-
-<select id="status">
-<option>New Lead</option>
-<option>Contacted</option>
-<option>Documents Pending</option>
-<option>Applied</option>
-<option>Visa Approved</option>
-<option>Rejected</option>
-</select>
-
-<input id="notes" placeholder="Notes">
-
-<button onclick="addStudent()">Add Student</button>
-
-<br><br>
-
-<input id="search" placeholder="Search..." oninput="renderList()">
-<button onclick="exportCSV()">⬇ Export Excel</button>
-
-<ul id="list"></ul>
-
-</div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>

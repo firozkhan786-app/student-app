@@ -13,8 +13,18 @@ const studentSchema = new mongoose.Schema({
 
   status: {
     type: String,
+    enum: [
+      "New Lead",
+      "Contacted",
+      "Documents Pending",
+      "Applied",
+      "Visa Approved",
+      "Rejected"
+    ],
     default: "New Lead"
   },
+
+  followUpDate: Date,   // ✅ ADD THIS
 
   notes: String,
 
